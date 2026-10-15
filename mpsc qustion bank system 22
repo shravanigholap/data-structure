@@ -1,0 +1,175 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+struct Node {
+    int id;
+    string question, subject, topic;
+    Node* next;
+};
+
+Node* head = NULL;
+
+// Add question
+void add() {
+    Node* n = new Node;
+
+    cout << "Enter ID: ";
+    cin >> n->id;
+    cin.ignore();
+
+    cout << "Enter Question: ";
+    getline(cin, n->question);
+
+    cout << "Enter Subject: ";
+    getline(cin, n->subject);
+
+    cout << "Enter Topic: ";
+    getline(cin, n->topic);
+
+    n->next = head;
+    head = n;
+
+    cout << "Question Added!\n";
+}
+
+// Display questions
+void display() {
+    Node* p = head;
+
+    if (p == NULL) {
+        cout << "No Questions Available!\n";
+        return;
+    }
+
+    while (p != NULL) {
+        cout << "\nID: " << p->id;
+        cout << "\nQuestion: " << p->question;
+        cout << "\nSubject: " << p->subject;
+        cout << "\nTopic: " << p->topic << "\n";
+        p = p->next;
+    }
+}
+
+// Search by ID
+void searchID() {
+    int id;
+    cout << "Enter ID: ";
+    cin >> id;
+
+    Node* p = head;
+
+    while (p != NULL) {
+        if (p->id == id) {
+            cout << "Question: " << p->question;
+            cout << "\nSubject: " << p->subject;
+            cout << "\nTopic: " << p->topic << "\n";
+            return;
+        }
+        p = p->next;
+    }
+
+    cout << "Question Not Found!\n";
+}
+
+// Search by subject
+void searchSubject() {
+    string sub;
+    cout << "Enter Subject: ";
+    cin >> ws;
+    getline(cin, sub);
+
+    Node* p = head;
+    bool found = false;
+
+    while (p != NULL) {
+        if (p->subject == sub) {
+            cout << "\nID: " << p->id;
+            cout << "\nQuestion: " << p->question;
+            cout << "\nTopic: " << p->topic << "\n";
+            found = true;
+        }
+        p = p->next;
+    }
+
+    if (!found)
+        cout << "Subject Not Found!\n";
+}
+
+// Delete question
+void deleteQuestion() {
+    int id;
+    cout << "Enter ID to delete: ";
+    cin >> id;
+
+    Node *p = head, *prev = NULL;
+
+    while (p != NULL && p->id != id) {
+        prev = p;
+        p = p->next;
+    }
+
+    if (p == NULL) {
+        cout << "Question Not Found!\n";
+        return;
+    }
+
+    if (prev == NULL)
+        head = p->next;
+    else
+        prev->next = p->next;
+
+    delete p;
+    cout << "Question Deleted!\n";
+}
+
+// Count questions
+void countQuestions() {
+    int count = 0;
+    Node* p = head;
+
+    while (p != NULL) {
+        count++;
+        p = p->next;
+    }
+
+    cout << "Total Questions: " << count << "\n";
+}
+
+int main() {
+    int ch;
+
+    do {
+        cout << "\n--- MPSC QUESTION BANK ---\n";
+        cout << "1. Add Question\n";
+        cout << "2. Display Questions\n";
+        cout << "3. Search by ID\n";
+        cout << "4. Search by Subject\n";
+        cout << "5. Delete Question\n";
+        cout << "6. Count Questions\n";
+        cout << "7. Exit\n";
+        cout << "Enter Choice: ";
+        cin >> ch;
+
+        switch (ch) {
+            case 1: add(); break;
+            case 2: display(); break;
+            case 3: searchID(); break;
+            case 4: searchSubject(); break;
+            case 5: deleteQuestion(); break;
+            case 6: countQuestions(); break;
+            case 7: cout << "Thank You!\n"; break;
+            default: cout << "Invalid Choice!\n";
+        }
+
+    } while (ch != 7);
+
+    // Free memory
+    while (head != NULL) {
+        Node* p = head;
+        head = head->next;
+        delete p;
+    }
+
+    return 0;
+}
