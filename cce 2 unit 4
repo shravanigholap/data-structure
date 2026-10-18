@@ -1,0 +1,109 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+
+using namespace std;
+
+// Node structure representing a webpage
+struct PageNode {
+    string pageName;
+    vector<PageNode*> children;
+
+    PageNode(string name) {
+        pageName = name;
+    }
+};
+
+// Function to print all root-to-leaf paths (Sitemap Navigation Paths)
+void printSitemapPaths(PageNode* root, string currentPath) {
+    if (root == nullptr) return;
+
+    // Append current page to the path
+    if (currentPath.empty()) {
+        currentPath = root->pageName;
+    } else {
+        currentPath += " -> " + root->pageName;
+    }
+
+    // If it's a leaf node, print the complete path
+    if (root->children.empty()) {
+        cout << currentPath << endl;
+        return;
+    }
+
+    // Otherwise, traverse all child pages
+    for (PageNode* child : root->children) {
+        printSitemapPaths(child, currentPath);
+    }
+}
+
+// Function to find the height of the tree
+int findHeight(PageNode* root) {
+    if (root == nullptr) return 0;
+    
+    // If it's a leaf node, height of this sub-tree is 1 (counting nodes)
+    if (root->children.empty()) return 1;
+
+    int maxChildHeight = 0;
+    for (PageNode* child : root->children) {
+        maxChildHeight = max(maxChildHeight, findHeight(child));
+    }
+
+    return 1 + maxChildHeight;
+}
+
+// Function to find the degree of the tree (maximum number of children any node has)
+int findDegree(PageNode* root) {
+    if (root == nullptr) return 0;
+
+    // The degree of the current node is the number of its children
+    int currentDegree = root->children.size();
+
+    // Find the max degree among all sub-trees
+    for (PageNode* child : root->children) {
+        currentDegree = max(currentDegree, findDegree(child));
+    }
+
+    return currentDegree;
+}
+
+int main() {
+    // 1. Creating the website sitemap hierarchy
+    PageNode* root = new PageNode("Home");
+
+    // Level 1 Pages
+    PageNode* about = new PageNode("About Us");
+    PageNode* products = new PageNode("Products");
+    PageNode* contact = new PageNode("Contact");
+
+    root->children.push_back(about);
+    root->children.push_back(products);
+    root->children.push_back(contact);
+
+    // Level 2 Pages (Under Products)
+    PageNode* electronics = new PageNode("Electronics");
+    PageNode* clothing = new PageNode("Clothing");
+
+    products->children.push_back(electronics);
+    products->children.push_back(clothing);
+
+    // Level 3 Pages (Under Electronics)
+    PageNode* phones = new PageNode("Smartphones");
+    PageNode* laptops = new PageNode("Laptops");
+
+    electronics->children.push_back(phones);
+    electronics->children.push_back(laptops);
+
+
+    // 2. Printing Output Results
+    cout << "--- Website Sitemap Paths (Root-to-Leaf) ---" << endl;
+    printSitemapPaths(root, "");
+    cout << endl;
+
+    cout << "--- Tree Properties ---" << endl;
+    cout << "Height of the Tree: " << findHeight(root) << " (Number of levels)" << endl;
+    cout << "Degree of the Tree: " << findDegree(root) << " (Max categories under one page)" << endl;
+
+    return 0;
+}
