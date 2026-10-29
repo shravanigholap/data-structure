@@ -1,0 +1,78 @@
+#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+int main() {
+    int n, edges;
+
+    cout << "Enter number of computers: ";
+    cin >> n;
+
+    vector<string> computers(n);
+    vector<vector<int>> adj(n);
+
+    // Enter computer names
+    for (int i = 0; i < n; i++) {
+        cout << "Enter name of computer " << i + 1 << ": ";
+        cin >> computers[i];
+    }
+
+    cout << "Enter number of communication links: ";
+    cin >> edges;
+
+    // Create communication links
+    cout << "\nEnter links using computer numbers (1 to "
+         << n << "):\n";
+
+    for (int i = 0; i < edges; i++) {
+        int u, v;
+        cout << "Link " << i + 1 << ": ";
+        cin >> u >> v;
+
+        if (u < 1 || u > n || v < 1 || v > n || u == v) {
+            cout << "Invalid link! Try again.\n";
+            i--;
+            continue;
+        }
+
+        adj[u - 1].push_back(v - 1);
+        adj[v - 1].push_back(u - 1);
+    }
+
+    // Display adjacency list
+    cout << "\nAdjacency List:\n";
+    for (int i = 0; i < n; i++) {
+        cout << computers[i] << " -> ";
+
+        for (int j = 0; j < adj[i].size(); j++) {
+            cout << computers[adj[i][j]] << " ";
+        }
+
+        cout << endl;
+    }
+
+    // Display neighbors of selected computer
+    int selected;
+    cout << "\nSelect computer number (1 to " << n << "): ";
+    cin >> selected;
+
+    if (selected < 1 || selected > n) {
+        cout << "Invalid computer number!\n";
+    } else {
+        cout << "Neighboring computers of "
+             << computers[selected - 1] << ": ";
+
+        if (adj[selected - 1].empty()) {
+            cout << "No neighboring computers";
+        } else {
+            for (int i = 0; i < adj[selected - 1].size(); i++) {
+                cout << computers[adj[selected - 1][i]] << " ";
+            }
+        }
+
+        cout << endl;
+    }
+
+    return 0;
+}
